@@ -51,26 +51,16 @@ def get_ip():
 
 
 def get_request_info():
-    # Get request method
     method = flask.request.method
-    # Get request header
     headers = flask.request.headers.items()
-    # Get request content
-    content = flask.request.get_data()
-    # Get request args
     args = flask.request.args.items()
-    # Get request form
     form = flask.request.form.items()
-    # Get request path
     path = flask.request.path
-    # Get request url
     url = flask.request.url
-    # Get request remote addr
     remote_addr = flask.request.remote_addr
     info = {
         "method": method,
         "headers": headers,
-        "content": content,
         "args": args,
         "form": form,
         "path": path,
@@ -135,17 +125,21 @@ def success():
     })
     response_json = r.json()
     success = response_json["success"]
-    if success:
-        if post_message_to_endpoint(message, remote_ip, info, frontendappend):
-            return flask.render_template('success.html', message=message)
+    try:
+        if success:
+            if post_message_to_endpoint(message, remote_ip, info, frontendappend):
+                return flask.render_template('success.html', message=message)
+            else:
+                message = "There's something wrong on our side."
+                return flask.render_template('deny.html', message=message)
         else:
-            message = "There's something wrong on our side."
+            if "error-codes" in response_json:
+                message = "hCaptcha error: " + response_json["error-codes"][0]
+            else:
+                message = "hCaptcha error, have you solved the captcha?"
             return flask.render_template('deny.html', message=message)
-    else:
-        if "error-codes" in response_json:
-            message = "hCaptcha error: " + response_json["error-codes"][0]
-        else:
-            message = "hCaptcha error, have you solved the captcha?"
+    except:
+        message = "There's something wrong on our side."
         return flask.render_template('deny.html', message=message)
 
 
