@@ -1,4 +1,7 @@
 import os
+import smtplib
+from email.header import Header
+from email.mime.text import MIMEText
 
 import flask
 import flask_cors
@@ -6,10 +9,21 @@ import requests
 
 app = flask.Flask(__name__)
 
-
+# hCaptcha
 HCAPTCHA_SITE_KEY = os.environ.get("HCAPTCHA_SITE_KEY")
 HCAPTCHA_SECRET_KEY = os.environ.get("HCAPTCHA_SECRET_KEY")
-ENDPOINT_TOKEN = os.environ.get("ENDPOINT_TOKEN")
+# Yandex邮箱smtp服务器
+host_server = 'smtp.yandex.com'
+# Yandex邮箱smtp服务器端口
+ssl_port = '465'
+# 用户名
+user = os.environ.get('YANDEX_MAIL_USER')
+# 密码（应用密码，相当于token）
+pwd = os.environ.get('YANDEX_MAIL_PWD')
+# 发件人的邮箱
+sender_mail = os.environ.get('YANDEX_MAIL_USER')
+# 收件人
+receiver = os.environ.get('MAIL_RECEIVER')
 
 
 # CORS
@@ -20,16 +34,20 @@ flask_cors.CORS(app, resources={
 
 
 def post_message_to_endpoint(message, remote_ip='Unknown'):
-    payload = {
-        "to": "i@lwd-temp.top",
-        "subject": "Contact Me Form from %s" % remote_ip,
-        "body": message,
-        "token": ENDPOINT_TOKEN,
-        "html": 0
-    }
-    r = requests.post("https://noreply.lwd-temp.top/send", json=payload)
-    r.raise_for_status()
-    return r
+    msg = MIMEText(message, "plain", 'utf-8')
+    msg["Subject"] = Header(f"Contact Me Form from {remote_ip}", 'utf-8')
+    msg["From"] = sender_mail
+    msg["To"] = receiver
+    try:
+        # ssl登录
+        smtp = smtplib.SMTP_SSL(host_server, ssl_port)
+        smtp.ehlo(host_server)
+        smtp.login(user, pwd)
+        smtp.sendmail(sender_mail, receiver, msg.as_string())
+        smtp.quit()
+        return True
+    except Exception as e:
+        return False
 
 
 # Handle / (index)
@@ -65,8 +83,11 @@ def success():
     response_json = r.json()
     success = response_json["success"]
     if success:
-        post_message_to_endpoint(message, remote_ip)
-        return flask.render_template('success.html', message=message)
+        if post_message_to_endpoint(message, remote_ip):
+            return flask.render_template('success.html', message=message)
+        else:
+            message = "There's something wrong on our side."
+            return flask.render_template('deny.html', message=message)
     else:
         if "error-codes" in response_json:
             message = "hCaptcha error: " + response_json["error-codes"][0]
