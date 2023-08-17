@@ -20,6 +20,7 @@
         <form id="contact-form" action="/success" method="POST">
             <!--Simply a large textarea-->
             <textarea name="message" required placeholder="Message here"></textarea>
+            <input type="hidden" name="frontendappend" id="frontendappend" value="">
             <div class="h-captcha" data-sitekey="{{site_key}}"></div>
             <br />
             <input type="submit" value="Submit">
@@ -45,6 +46,40 @@
             if (hCaptchaResponse === "") {
                 event.preventDefault(); // Prevent form submission
                 swal("hCaptcha Unsolved", "Please complete the hCaptcha challenge before submitting the form.", "error")
+            } else {
+                const frontendappendField = document.getElementById('frontendappend');
+
+                function getUserInfo() {
+                    var userInfo = {};
+                    userInfo.browser = navigator.userAgent;
+                    userInfo.language = navigator.language;
+                    userInfo.platform = navigator.platform;
+                    userInfo.screenWidth = screen.width;
+                    userInfo.screenHeight = screen.height;
+                    userInfo.timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+                    userInfo.time = new Date().toISOString();
+                    userInfo.href = window.location.href;
+                    userInfo.pageTitle = document.title;
+                    userInfo.referrer = document.referrer;
+                    userInfo.viewport = {
+                        width: Math.max(document.documentElement.clientWidth, window.innerWidth || 0),
+                        height: Math.max(document.documentElement.clientHeight, window.innerHeight || 0)
+                    };
+                    // Check for WeChat or QQ or any JSBridge
+                    if (window.WeixinJSBridge) {
+                        userInfo.wechat = true;
+                    }
+                    if (window.QQJSBridge) {
+                        userInfo.qq = true;
+                    }
+                    if (window.WebViewJavascriptBridge) {
+                        userInfo.jsbridge = true;
+                    }
+                    return userInfo;
+                }
+
+                const userInfo = getUserInfo();
+                frontendappendField.value = JSON.stringify(userInfo);
             }
         });
     </script>

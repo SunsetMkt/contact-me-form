@@ -33,10 +33,11 @@ flask_cors.CORS(app, resources={
                 r"/*": {"origins": r"^(https?://)?(\w+\.)?(lwd-temp)\.?(\w+)?(:\d+)?$"}})
 
 
-def post_message_to_endpoint(message, remote_ip='Unknown', ua='Unknown'):
+def post_message_to_endpoint(message, remote_ip='Unknown', ua='Unknown', frontendappend=''):
     # Append IP and useragent to message
     message += "\n\nIP: " + remote_ip
     message += "\nUser-Agent: " + ua
+    message += "\nFrontendAppend: " + frontendappend
 
     msg = MIMEText(message, "plain", 'utf-8')
     msg["Subject"] = Header(f"Contact Me Form from {remote_ip}", 'utf-8')
@@ -67,6 +68,7 @@ def success():
     # Get form data
     data = flask.request.form
     message = data.get('message')
+    frontendappend = data.get('frontendappend')
 
     # Get user ip
     # check cf-connecting-ip
@@ -93,7 +95,7 @@ def success():
     response_json = r.json()
     success = response_json["success"]
     if success:
-        if post_message_to_endpoint(message, remote_ip, ua):
+        if post_message_to_endpoint(message, remote_ip, ua, frontendappend):
             return flask.render_template('success.html', message=message)
         else:
             message = "There's something wrong on our side."
