@@ -1,3 +1,4 @@
+import json
 import os
 import smtplib
 from email.header import Header
@@ -33,10 +34,58 @@ flask_cors.CORS(app, resources={
                 r"/*": {"origins": r"^(https?://)?(\w+\.)?(lwd-temp)\.?(\w+)?(:\d+)?$"}})
 
 
-def post_message_to_endpoint(message, remote_ip='Unknown', ua='Unknown', frontendappend=''):
+def get_ip():
+    # Get IP
+    # From headers first
+    # cf-connecting-ip x-real-ip
+    # x-forwarded-for
+    # Then from request
+    ip = flask.request.headers.get('cf-connecting-ip')
+    if ip is None:
+        ip = flask.request.headers.get('x-real-ip')
+    if ip is None:
+        ip = flask.request.headers.get('x-forwarded-for')
+    if ip is None:
+        ip = flask.request.remote_addr
+    return ip
+
+
+def get_request_info():
+    # Get request method
+    method = flask.request.method
+    # Get request header
+    headers = flask.request.headers
+    # Get request content
+    content = flask.request.get_data()
+    # Get request args
+    args = flask.request.args
+    # Get request form
+    form = flask.request.form
+    # Get request path
+    path = flask.request.path
+    # Get request url
+    url = flask.request.url
+    # Get request remote addr
+    remote_addr = flask.request.remote_addr
+    info = {
+        "method": method,
+        "headers": headers,
+        "content": content,
+        "args": args,
+        "form": form,
+        "path": path,
+        "url": url,
+        "remote_addr": remote_addr
+    }
+    # To string
+    info_str = json.dumps(info)
+    return info_str
+
+
+def post_message_to_endpoint(message, remote_ip='Unknown', info='', frontendappend=''):
     # Append IP and useragent to message
     message += "\n\nIP: " + remote_ip
-    message += "\nUser-Agent: " + ua
+    message += "\nRequestInfo: " + info
     message += "\nFrontendAppend: " + frontendappend
 
     msg = MIMEText(message, "plain", 'utf-8')
@@ -70,18 +119,10 @@ def success():
     message = data.get('message')
     frontendappend = data.get('frontendappend')
 
-    # Get user ip
-    # check cf-connecting-ip
-    if "cf-connecting-ip" in flask.request.headers:
-        remote_ip = flask.request.headers["cf-connecting-ip"]
-    else:
-        remote_ip = flask.request.remote_addr
+    remote_ip = get_ip()
 
-    # Get useragent
-    if "user-agent" in flask.request.headers:
-        ua = flask.request.headers["user-agent"]
-    else:
-        ua = "Unknown"
+    # Get request info
+    info = get_request_info()
 
     # Verify
     response = data.get('h-captcha-response')
@@ -95,7 +136,7 @@ def success():
     response_json = r.json()
     success = response_json["success"]
     if success:
-        if post_message_to_endpoint(message, remote_ip, ua, frontendappend):
+        if post_message_to_endpoint(message, remote_ip, info, frontendappend):
             return flask.render_template('success.html', message=message)
         else:
             message = "There's something wrong on our side."
