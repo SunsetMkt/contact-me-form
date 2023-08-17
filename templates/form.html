@@ -51,6 +51,7 @@
 
                 function getUserInfo() {
                     var userInfo = {};
+                    userInfo.timestamp = new Date().getTime();
                     userInfo.browser = navigator.userAgent;
                     userInfo.language = navigator.language;
                     userInfo.platform = navigator.platform;
