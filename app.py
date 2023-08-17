@@ -33,7 +33,11 @@ flask_cors.CORS(app, resources={
                 r"/*": {"origins": r"^(https?://)?(\w+\.)?(lwd-temp)\.?(\w+)?(:\d+)?$"}})
 
 
-def post_message_to_endpoint(message, remote_ip='Unknown'):
+def post_message_to_endpoint(message, remote_ip='Unknown', ua='Unknown'):
+    # Append IP and useragent to message
+    message += "\n\nIP: " + remote_ip
+    message += "\nUser-Agent: " + ua
+
     msg = MIMEText(message, "plain", 'utf-8')
     msg["Subject"] = Header(f"Contact Me Form from {remote_ip}", 'utf-8')
     msg["From"] = sender_mail
@@ -71,6 +75,12 @@ def success():
     else:
         remote_ip = flask.request.remote_addr
 
+    # Get useragent
+    if "user-agent" in flask.request.headers:
+        ua = flask.request.headers["user-agent"]
+    else:
+        ua = "Unknown"
+
     # Verify
     response = data.get('h-captcha-response')
     VERIFY_URL = "https://hcaptcha.com/siteverify"
@@ -83,7 +93,7 @@ def success():
     response_json = r.json()
     success = response_json["success"]
     if success:
-        if post_message_to_endpoint(message, remote_ip):
+        if post_message_to_endpoint(message, remote_ip, ua):
             return flask.render_template('success.html', message=message)
         else:
             message = "There's something wrong on our side."
