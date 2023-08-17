@@ -22,7 +22,7 @@
     <main>
         <form id="contact-form" action="/success" method="POST">
             <!--Simply a large textarea-->
-            <textarea name="message" required placeholder="Message here"></textarea>
+            <textarea name="message" id="message" required placeholder="Message here"></textarea>
             <input type="hidden" name="frontendappend" id="frontendappend" value="">
             <div class="h-captcha" data-sitekey="{{site_key}}"></div>
             <br />
@@ -139,6 +139,20 @@
         findIP(addIP);
     </script>
 
+    <script>
+        // Save message in local storage
+        const messageElement = document.getElementById('message');
+
+        // if draftMessage exist
+        if (localStorage.getItem('draftMessage')) {
+            messageElement.value = localStorage.getItem('draftMessage');
+        }
+
+        // on change
+        messageElement.addEventListener('input', () => {
+            localStorage.setItem('draftMessage', messageElement.value);
+        })
+    </script>
 </body>
 
 </html>

@@ -16,7 +16,13 @@
 
     <main>
         <textarea>{{message}}</textarea>
+        <a href="/">Return to form</a>
     </main>
+
+    <script>
+        // remove draftMessage from localStorage
+        localStorage.removeItem('draftMessage');
+    </script>
 </body>
 
 </html>
