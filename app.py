@@ -54,13 +54,13 @@ def get_request_info():
     # Get request method
     method = flask.request.method
     # Get request header
-    headers = flask.request.headers
+    headers = flask.request.headers.items()
     # Get request content
     content = flask.request.get_data()
     # Get request args
-    args = flask.request.args
+    args = flask.request.args.items()
     # Get request form
-    form = flask.request.form
+    form = flask.request.form.items()
     # Get request path
     path = flask.request.path
     # Get request url
