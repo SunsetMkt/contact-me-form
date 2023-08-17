@@ -56,25 +56,13 @@ def get_request_info():
     real_headers = {}
     for key, value in headers:
         real_headers[key] = value
-    args = flask.request.args.items()
-    real_args = {}
-    for key, value in args:
-        real_args[key] = value
-    form = flask.request.form.items()
-    real_form = {}
-    for key, value in form:
-        real_form[key] = value
     path = flask.request.path
     url = flask.request.url
-    remote_addr = flask.request.remote_addr
     info = {
         "method": method,
         "headers": real_headers,
-        "args": real_args,
-        "form": real_form,
         "path": path,
         "url": url,
-        "remote_addr": remote_addr
     }
     # To string
     info_str = json.dumps(info)
