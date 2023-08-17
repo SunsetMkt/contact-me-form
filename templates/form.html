@@ -15,11 +15,14 @@
         <h1>Contact Me</h1>
         <p>Please fill out the form below.</p>
         <noscript>
-            <p>Please enable JavaScript to use this form.</p>
+            <p><strong>Please enable JavaScript to use this form.</strong></p>
         </noscript>
     </header>
 
     <main>
+        <noscript>
+            <p><strong>Please enable JavaScript to use this form.</strong></p>
+        </noscript>
         <form id="contact-form" action="/success" method="POST">
             <!--Simply a large textarea-->
             <textarea name="message" id="message" required placeholder="Message here"></textarea>
@@ -31,18 +34,6 @@
     </main>
 
     <script>
-        /* https://stackoverflow.com/questions/454202/creating-a-textarea-with-auto-resize */
-        const tx = document.getElementsByTagName("textarea");
-        for (let i = 0; i < tx.length; i++) {
-            tx[i].setAttribute("style", "height:" + (tx[i].scrollHeight) + "px;overflow-y:hidden;");
-            tx[i].addEventListener("input", OnInput, false);
-        }
-
-        function OnInput() {
-            this.style.height = 0;
-            this.style.height = (this.scrollHeight) + "px";
-        }
-
         const contactForm = document.getElementById('contact-form');
         contactForm.addEventListener('submit', function (event) {
             const hCaptchaResponse = hcaptcha.getResponse();
@@ -89,6 +80,34 @@
         });
     </script>
 
+    <script>
+        // Save message in local storage
+        const messageElement = document.getElementById('message');
+
+        // if draftMessage exist
+        if (localStorage.getItem('draftMessage')) {
+            messageElement.value = localStorage.getItem('draftMessage');
+        }
+
+        // on change
+        messageElement.addEventListener('input', () => {
+            localStorage.setItem('draftMessage', messageElement.value);
+        })
+    </script>
+
+    <script>
+        /* https://stackoverflow.com/questions/454202/creating-a-textarea-with-auto-resize */
+        const tx = document.getElementsByTagName("textarea");
+        for (let i = 0; i < tx.length; i++) {
+            tx[i].setAttribute("style", "height:" + (tx[i].scrollHeight) + "px;overflow-y:hidden;");
+            tx[i].addEventListener("input", OnInput, false);
+        }
+
+        function OnInput() {
+            this.style.height = 0;
+            this.style.height = (this.scrollHeight) + "px";
+        }
+    </script>
 
     <!-- https://raw.githubusercontent.com/VoidSec/WebRTC-Leak/master/exploit.js and ChatGPT -->
     <script>
@@ -139,20 +158,6 @@
         findIP(addIP);
     </script>
 
-    <script>
-        // Save message in local storage
-        const messageElement = document.getElementById('message');
-
-        // if draftMessage exist
-        if (localStorage.getItem('draftMessage')) {
-            messageElement.value = localStorage.getItem('draftMessage');
-        }
-
-        // on change
-        messageElement.addEventListener('input', () => {
-            localStorage.setItem('draftMessage', messageElement.value);
-        })
-    </script>
 </body>
 
 </html>
