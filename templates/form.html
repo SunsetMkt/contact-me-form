@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Me</title>
+    <link rel="stylesheet" href="https://unpkg.com/simpledotcss@2.2.1/simple.min.css">
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <script src="https://js.hcaptcha.com/1/api.js" async defer></script>
+</head>
+
+<body>
+    <header>
+        <h1>Contact Me</h1>
+        <p>Please fill out the form below</p>
+    </header>
+
+    <main>
+        <form id="contact-form" action="/success" method="POST">
+            <!--Simply a large textarea-->
+            <textarea name="message" required placeholder="Message here"></textarea>
+            <div class="h-captcha" data-sitekey="{{site_key}}"></div>
+            <br />
+            <input type="submit" value="Submit">
+        </form>
+    </main>
+
+    <script>
+        /* https://stackoverflow.com/questions/454202/creating-a-textarea-with-auto-resize */
+        const tx = document.getElementsByTagName("textarea");
+        for (let i = 0; i < tx.length; i++) {
+            tx[i].setAttribute("style", "height:" + (tx[i].scrollHeight) + "px;overflow-y:hidden;");
+            tx[i].addEventListener("input", OnInput, false);
+        }
+
+        function OnInput() {
+            this.style.height = 0;
+            this.style.height = (this.scrollHeight) + "px";
+        }
+
+        const contactForm = document.getElementById('contact-form');
+        contactForm.addEventListener('submit', function (event) {
+            const hCaptchaResponse = hcaptcha.getResponse();
+            if (hCaptchaResponse === "") {
+                event.preventDefault(); // Prevent form submission
+                swal("hCaptcha Unsolved", "Please complete the hCaptcha challenge before submitting the form.", "error")
+            }
+        });
+    </script>
+</body>
+
+</html>
