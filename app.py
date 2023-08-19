@@ -69,11 +69,18 @@ def get_request_info():
     return info_str
 
 
+def NoneTypeHandler(obj):
+    if obj is None:
+        return ''
+    else:
+        return obj
+
+
 def post_message_to_endpoint(message, remote_ip='Unknown', info='', frontendappend=''):
     # Append IP and useragent to message
-    message += "\n\nIP: " + remote_ip
-    message += "\nRequestInfo: " + info
-    message += "\nFrontendAppend: " + frontendappend
+    message += "\n\nIP: " + NoneTypeHandler(remote_ip)
+    message += "\nRequestInfo: " + NoneTypeHandler(info)
+    message += "\nFrontendAppend: " + NoneTypeHandler(frontendappend)
 
     msg = MIMEText(message, "plain", 'utf-8')
     msg["Subject"] = Header(f"Contact Me Form from {remote_ip}", 'utf-8')
@@ -106,7 +113,7 @@ def success():
     message = data.get('message')
     frontendappend = data.get('frontendappend')
 
-    remote_ip = get_ip()
+    remote_ip = NoneTypeHandler(get_ip())
 
     # Get request info
     info = get_request_info()
