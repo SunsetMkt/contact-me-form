@@ -8,6 +8,27 @@
     <link rel="stylesheet" href="https://unpkg.com/simpledotcss@2.2.1/simple.min.css">
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <script src="https://js.hcaptcha.com/1/api.js" async defer></script>
+    <style>
+        .loading {
+            background: repeating-linear-gradient(60deg, #f5f7ff 0%, #f5f7ff 1%, #0d47a1 1%, #0d47a1 2%);
+            animation: loading 20s ease-in-out infinite;
+            background-size: 500% 500%;
+        }
+
+        @keyframes loading {
+            0% {
+                background-position: 0 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+    </style>
 </head>
 
 <body>
@@ -29,7 +50,7 @@
             <input type="hidden" name="frontendappend" id="frontendappend" value="">
             <div class="h-captcha" data-sitekey="{{site_key}}"></div>
             <br />
-            <input type="submit" value="Submit">
+            <input type="submit" id="submit" value="Submit">
         </form>
         <p>Please solve the hCaptcha challenge before submitting the form.</p>
         <p>Please include your contact information in the message if you would like a reply.</p>
@@ -45,6 +66,11 @@
                 swal("hCaptcha Unsolved", "Please complete the hCaptcha challenge before submitting the form.", "error")
             } else {
                 const frontendappendField = document.getElementById('frontendappend');
+
+                const submitBtn = document.getElementById('submit');
+                submitBtn.disabled = true;
+                submitBtn.value = 'Submitting...';
+                submitBtn.classList.add('loading');
 
                 function getUserInfo() {
                     var userInfo = {};
