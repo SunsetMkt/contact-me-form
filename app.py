@@ -105,9 +105,9 @@ def index():
     return flask.render_template('form.html', site_key=HCAPTCHA_SITE_KEY)
 
 
-# Handle /success
-@app.route('/success', methods=["POST"])
-def success():
+# Handle /submit
+@app.route('/submit', methods=["POST"])
+def submit_endpoint():
     # Get form data
     data = flask.request.form
     message = data.get('message')
