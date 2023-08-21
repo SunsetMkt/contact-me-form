@@ -30,6 +30,22 @@
         <p class="notice">{{message}}</p>
         <p><a href="/">Return to form</a></p>
     </main>
+
+    <script>
+        // 阻止在本页刷新
+        window.onload = function () {
+            if (window.history.replaceState) {
+                // 获取来源页的URL
+                var referrerURL = document.referrer;
+
+                // 检查 referrer 是否存在
+                if (referrerURL) {
+                    // 将当前页面的URL替换为来源页的URL
+                    window.history.replaceState(null, null, referrerURL);
+                }
+            }
+        };
+    </script>
 </body>
 
 </html>
