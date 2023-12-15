@@ -134,16 +134,16 @@ def submit_endpoint():
             if post_message_to_endpoint(message, remote_ip, info, frontendappend):
                 return flask.render_template('success.html', message=message)
             else:
-                message = "There's something wrong on our side."
+                message = "It appears there might be an issue on our end. We apologize for the inconvenience."
                 return flask.render_template('deny.html', message=message)
         else:
             if "error-codes" in response_json:
-                message = "hCaptcha error: " + response_json["error-codes"][0]
+                message = "We've encountered an hCaptcha error: " + response_json["error-codes"][0]
             else:
-                message = "hCaptcha error, have you solved the captcha?"
+                message = "We've encountered an hCaptcha error. Kindly ensure that you have successfully solved the captcha before proceeding."
             return flask.render_template('deny.html', message=message)
     except:
-        message = "There's something wrong on our side."
+        message = "It appears there might be an issue on our end. We apologize for the inconvenience."
         return flask.render_template('deny.html', message=message)
 
 
