@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contact Me</title>
+    <title>Feel free to reach out - We welcome your contact.</title>
     <link rel="stylesheet" href="https://unpkg.com/simpledotcss@2.2.1/simple.min.css">
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <script src="https://js.hcaptcha.com/1/api.js" async defer></script>
@@ -33,28 +33,28 @@
 
 <body>
     <header>
-        <h1>Contact Me</h1>
-        <p>Please fill out the form below.</p>
+        <h1>Contact Form</h1>
+        <p>Kindly complete the form provided below.</p>
         <noscript>
-            <p><strong>Please enable JavaScript to use this form.</strong></p>
+            <p><strong>To utilize this form, please ensure that JavaScript is enabled in your browser settings.</strong></p>
         </noscript>
     </header>
 
     <main>
         <noscript>
-            <p><strong>Please enable JavaScript to use this form.</strong></p>
+            <p><strong>To utilize this form, please ensure that JavaScript is enabled in your browser settings.</strong></p>
         </noscript>
         <form id="contact-form" action="/submit" method="POST">
             <!--Simply a large textarea-->
-            <textarea name="message" id="message" required placeholder="Your message here."></textarea>
+            <textarea name="message" id="message" required placeholder="Share your message with us here."></textarea>
             <input type="hidden" name="frontendappend" id="frontendappend" value="">
             <div class="h-captcha" data-sitekey="{{site_key}}"></div>
             <br />
             <input type="submit" id="submit" value="Submit">
         </form>
-        <p>Please solve the hCaptcha challenge before submitting the form.</p>
-        <p>Please include your contact information in the message if you would like a reply.</p>
-        <p>For security reasons, only plaintext messages are accepted.</p>
+        <p>Before submitting the form, please solve the hCaptcha challenge.</p>
+        <p>If you desire a response, kindly include your contact information in the message.</p>
+        <p>For security purposes, we only accept plaintext messages.</p>
     </main>
 
     <script>
