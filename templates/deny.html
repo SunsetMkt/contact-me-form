@@ -1,51 +1,55 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Feel free to reach out - We welcome your contact.</title>
-    <link rel="stylesheet" href="https://unpkg.com/simpledotcss@2.2.1/simple.min.css">
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/simpledotcss@2.2.1/simple.min.css"
+    />
     <style>
-        body>header {
-            background-color: #f5d9d9;
-            border: 1px solid #d9a3a3;
-            color: #834d4d;
-        }
+      body > header {
+        background-color: #f5d9d9;
+        border: 1px solid #d9a3a3;
+        color: #834d4d;
+      }
 
-        .notice {
-            background-color: #f5d9d9;
-            border: 1px solid #d9a3a3;
-        }
+      .notice {
+        background-color: #f5d9d9;
+        border: 1px solid #d9a3a3;
+      }
     </style>
-</head>
+  </head>
 
-<body>
+  <body>
     <header>
-        <h1>Submission Failed</h1>
-        <p>Oops! It seems there was an issue with your submission. Please try again.</p>
+      <h1>Submission Failed</h1>
+      <p>
+        Oops! It seems there was an issue with your submission. Please try
+        again.
+      </p>
     </header>
 
     <main>
-        <p class="notice">{{message}}</p>
-        <p><a href="/">Go back to the form.</a></p>
+      <p class="notice">{{message}}</p>
+      <p><a href="/">Go back to the form.</a></p>
     </main>
 
     <script>
-        // 阻止在本页刷新
-        window.onload = function () {
-            if (window.history.replaceState) {
-                // 获取来源页的URL
-                var referrerURL = document.referrer;
+      // 阻止在本页刷新
+      window.onload = function () {
+        if (window.history.replaceState) {
+          // 获取来源页的URL
+          var referrerURL = document.referrer;
 
-                // 检查 referrer 是否存在
-                if (referrerURL) {
-                    // 将当前页面的URL替换为来源页的URL
-                    window.history.replaceState(null, null, referrerURL);
-                }
-            }
-        };
+          // 检查 referrer 是否存在
+          if (referrerURL) {
+            // 将当前页面的URL替换为来源页的URL
+            window.history.replaceState(null, null, referrerURL);
+          }
+        }
+      };
     </script>
-</body>
-
+  </body>
 </html>

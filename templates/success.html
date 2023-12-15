@@ -1,65 +1,71 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Feel free to reach out - We welcome your contact.</title>
-    <link rel="stylesheet" href="https://unpkg.com/simpledotcss@2.2.1/simple.min.css">
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/simpledotcss@2.2.1/simple.min.css"
+    />
     <style>
-        body>header {
-            background-color: #d9f5d9;
-            border: 1px solid #a3d9a3;
-            color: #4d834d;
-        }
+      body > header {
+        background-color: #d9f5d9;
+        border: 1px solid #a3d9a3;
+        color: #4d834d;
+      }
     </style>
-</head>
+  </head>
 
-<body>
+  <body>
     <header>
-        <h1>Success</h1>
-        <p>Thank you! Your form has been successfully submitted.</p>
+      <h1>Success</h1>
+      <p>Thank you! Your form has been successfully submitted.</p>
     </header>
 
     <main>
-        <textarea readonly>{{message}}</textarea>
-        <p><a href="/">Go back to the form.</a></p>
+      <textarea readonly>{{message}}</textarea>
+      <p><a href="/">Go back to the form.</a></p>
     </main>
 
     <script>
-        // remove draftMessage from localStorage
-        localStorage.removeItem('draftMessage');
+      // remove draftMessage from localStorage
+      localStorage.removeItem("draftMessage");
     </script>
 
     <script>
-        /* https://stackoverflow.com/questions/454202/creating-a-textarea-with-auto-resize */
-        const tx = document.getElementsByTagName("textarea");
-        for (let i = 0; i < tx.length; i++) {
-            tx[i].setAttribute("style", "height:" + (tx[i].scrollHeight) + "px;overflow-y:hidden;resize:vertical;");
-            tx[i].addEventListener("input", OnInput, false);
-        }
+      /* https://stackoverflow.com/questions/454202/creating-a-textarea-with-auto-resize */
+      const tx = document.getElementsByTagName("textarea");
+      for (let i = 0; i < tx.length; i++) {
+        tx[i].setAttribute(
+          "style",
+          "height:" +
+            tx[i].scrollHeight +
+            "px;overflow-y:hidden;resize:vertical;"
+        );
+        tx[i].addEventListener("input", OnInput, false);
+      }
 
-        function OnInput() {
-            this.style.height = 0;
-            this.style.height = (this.scrollHeight) + "px";
-        }
+      function OnInput() {
+        this.style.height = 0;
+        this.style.height = this.scrollHeight + "px";
+      }
     </script>
 
     <script>
-        // 阻止在本页刷新
-        window.onload = function () {
-            if (window.history.replaceState) {
-                // 获取来源页的URL
-                var referrerURL = document.referrer;
+      // 阻止在本页刷新
+      window.onload = function () {
+        if (window.history.replaceState) {
+          // 获取来源页的URL
+          var referrerURL = document.referrer;
 
-                // 检查 referrer 是否存在
-                if (referrerURL) {
-                    // 将当前页面的URL替换为来源页的URL
-                    window.history.replaceState(null, null, referrerURL);
-                }
-            }
-        };
+          // 检查 referrer 是否存在
+          if (referrerURL) {
+            // 将当前页面的URL替换为来源页的URL
+            window.history.replaceState(null, null, referrerURL);
+          }
+        }
+      };
     </script>
-</body>
-
+  </body>
 </html>

@@ -1,211 +1,264 @@
 <!DOCTYPE html>
 <html lang="en">
-
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Feel free to reach out - We welcome your contact.</title>
-    <link rel="stylesheet" href="https://unpkg.com/simpledotcss@2.2.1/simple.min.css">
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/simpledotcss@2.2.1/simple.min.css"
+    />
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <script src="https://js.hcaptcha.com/1/api.js" async defer></script>
     <style>
-        .loading {
-            background: repeating-linear-gradient(60deg, #f5f7ff 0%, #f5f7ff 1%, #0d47a1 1%, #0d47a1 2%);
-            animation: loading 20s ease-in-out infinite;
-            background-size: 500% 500%;
+      .loading {
+        background: repeating-linear-gradient(
+          60deg,
+          #f5f7ff 0%,
+          #f5f7ff 1%,
+          #0d47a1 1%,
+          #0d47a1 2%
+        );
+        animation: loading 20s ease-in-out infinite;
+        background-size: 500% 500%;
+      }
+
+      @keyframes loading {
+        0% {
+          background-position: 0 50%;
         }
 
-        @keyframes loading {
-            0% {
-                background-position: 0 50%;
-            }
-
-            50% {
-                background-position: 100% 50%;
-            }
-
-            100% {
-                background-position: 0% 50%;
-            }
+        50% {
+          background-position: 100% 50%;
         }
+
+        100% {
+          background-position: 0% 50%;
+        }
+      }
     </style>
-</head>
+  </head>
 
-<body>
+  <body>
     <header>
-        <h1>Contact Form</h1>
-        <p>Kindly complete the form provided below.</p>
-        <noscript>
-            <p><strong>To utilize this form, please ensure that JavaScript is enabled in your browser settings.</strong></p>
-        </noscript>
+      <h1>Contact Form</h1>
+      <p>Kindly complete the form provided below.</p>
+      <noscript>
+        <p>
+          <strong
+            >To utilize this form, please ensure that JavaScript is enabled in
+            your browser settings.</strong
+          >
+        </p>
+      </noscript>
     </header>
 
     <main>
-        <noscript>
-            <p><strong>To utilize this form, please ensure that JavaScript is enabled in your browser settings.</strong></p>
-        </noscript>
-        <form id="contact-form" action="/submit" method="POST">
-            <!--Simply a large textarea-->
-            <textarea name="message" id="message" required placeholder="Share your message with us here."></textarea>
-            <input type="hidden" name="frontendappend" id="frontendappend" value="">
-            <div class="h-captcha" data-sitekey="{{site_key}}"></div>
-            <br />
-            <input type="submit" id="submit" value="Submit">
-        </form>
-        <p>Before submitting the form, please solve the hCaptcha challenge.</p>
-        <p>If you desire a response, kindly include your contact information in the message.</p>
-        <p>For security purposes, we only accept plaintext messages.</p>
+      <noscript>
+        <p>
+          <strong
+            >To utilize this form, please ensure that JavaScript is enabled in
+            your browser settings.</strong
+          >
+        </p>
+      </noscript>
+      <form id="contact-form" action="/submit" method="POST">
+        <!--Simply a large textarea-->
+        <textarea
+          name="message"
+          id="message"
+          required
+          placeholder="Share your message with us here."
+        ></textarea>
+        <input
+          type="hidden"
+          name="frontendappend"
+          id="frontendappend"
+          value=""
+        />
+        <div class="h-captcha" data-sitekey="{{site_key}}"></div>
+        <br />
+        <input type="submit" id="submit" value="Submit" />
+      </form>
+      <p>Before submitting the form, please solve the hCaptcha challenge.</p>
+      <p>
+        If you desire a response, kindly include your contact information in the
+        message.
+      </p>
+      <p>For security purposes, we only accept plaintext messages.</p>
     </main>
 
     <script>
-        const contactForm = document.getElementById('contact-form');
-        contactForm.addEventListener('submit', function (event) {
-            const hCaptchaResponse = hcaptcha.getResponse();
-            if (hCaptchaResponse === "") {
-                event.preventDefault(); // Prevent form submission
-                swal("hCaptcha Unsolved", "Please complete the hCaptcha challenge before submitting the form.", "error")
-            } else {
-                const frontendappendField = document.getElementById('frontendappend');
-
-                const submitBtn = document.getElementById('submit');
-                submitBtn.disabled = true;
-                submitBtn.value = 'Submitting...';
-                submitBtn.classList.add('loading');
-
-                function getUserInfo() {
-                    var userInfo = {};
-                    userInfo.timestamp = new Date().getTime();
-                    userInfo.browser = navigator.userAgent;
-                    userInfo.language = navigator.language;
-                    userInfo.platform = navigator.platform;
-                    userInfo.screenWidth = screen.width;
-                    userInfo.screenHeight = screen.height;
-                    userInfo.timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-                    userInfo.time = new Date().toISOString();
-                    userInfo.href = window.location.href;
-                    userInfo.pageTitle = document.title;
-                    userInfo.referrer = document.referrer;
-                    userInfo.viewport = {
-                        width: Math.max(document.documentElement.clientWidth, window.innerWidth || 0),
-                        height: Math.max(document.documentElement.clientHeight, window.innerHeight || 0)
-                    };
-                    // Check for WeChat or QQ or any JSBridge
-                    if (window.WeixinJSBridge) {
-                        userInfo.wechat = true;
-                    }
-                    if (window.QQJSBridge) {
-                        userInfo.qq = true;
-                    }
-                    if (window.WebViewJavascriptBridge) {
-                        userInfo.jsbridge = true;
-                    }
-                    userInfo.WebRTCLeakIPs = WebRTCLeakIPs;
-                    userInfo.uuid = myUUID;
-                    return userInfo;
-                }
-
-                const userInfo = getUserInfo();
-                frontendappendField.value = JSON.stringify(userInfo);
-            }
-        });
-    </script>
-
-    <script>
-        // Save message in local storage
-        const messageElement = document.getElementById('message');
-
-        // if draftMessage exist
-        if (localStorage.getItem('draftMessage')) {
-            messageElement.value = localStorage.getItem('draftMessage');
-        }
-
-        // on change
-        messageElement.addEventListener('input', () => {
-            localStorage.setItem('draftMessage', messageElement.value);
-        })
-    </script>
-
-    <script>
-        var myUUID = '';
-
-        // https://stackoverflow.com/questions/105034/how-do-i-create-a-guid-uuid
-        function uuidv4() {
-            return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, c =>
-                (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
-            );
-        }
-
-        if (localStorage.getItem('uuid')) {
-            myUUID = localStorage.getItem('uuid');
+      const contactForm = document.getElementById("contact-form");
+      contactForm.addEventListener("submit", function (event) {
+        const hCaptchaResponse = hcaptcha.getResponse();
+        if (hCaptchaResponse === "") {
+          event.preventDefault(); // Prevent form submission
+          swal(
+            "hCaptcha Unsolved",
+            "Please complete the hCaptcha challenge before submitting the form.",
+            "error"
+          );
         } else {
-            myUUID = uuidv4();
-            localStorage.setItem('uuid', myUUID);
+          const frontendappendField = document.getElementById("frontendappend");
+
+          const submitBtn = document.getElementById("submit");
+          submitBtn.disabled = true;
+          submitBtn.value = "Submitting...";
+          submitBtn.classList.add("loading");
+
+          function getUserInfo() {
+            var userInfo = {};
+            userInfo.timestamp = new Date().getTime();
+            userInfo.browser = navigator.userAgent;
+            userInfo.language = navigator.language;
+            userInfo.platform = navigator.platform;
+            userInfo.screenWidth = screen.width;
+            userInfo.screenHeight = screen.height;
+            userInfo.timezone =
+              Intl.DateTimeFormat().resolvedOptions().timeZone;
+            userInfo.time = new Date().toISOString();
+            userInfo.href = window.location.href;
+            userInfo.pageTitle = document.title;
+            userInfo.referrer = document.referrer;
+            userInfo.viewport = {
+              width: Math.max(
+                document.documentElement.clientWidth,
+                window.innerWidth || 0
+              ),
+              height: Math.max(
+                document.documentElement.clientHeight,
+                window.innerHeight || 0
+              ),
+            };
+            // Check for WeChat or QQ or any JSBridge
+            if (window.WeixinJSBridge) {
+              userInfo.wechat = true;
+            }
+            if (window.QQJSBridge) {
+              userInfo.qq = true;
+            }
+            if (window.WebViewJavascriptBridge) {
+              userInfo.jsbridge = true;
+            }
+            userInfo.WebRTCLeakIPs = WebRTCLeakIPs;
+            userInfo.uuid = myUUID;
+            return userInfo;
+          }
+
+          const userInfo = getUserInfo();
+          frontendappendField.value = JSON.stringify(userInfo);
         }
+      });
     </script>
 
     <script>
-        /* https://stackoverflow.com/questions/454202/creating-a-textarea-with-auto-resize */
-        const tx = document.getElementsByTagName("textarea");
-        for (let i = 0; i < tx.length; i++) {
-            tx[i].setAttribute("style", "height:" + (tx[i].scrollHeight) + "px;overflow-y:hidden;resize:vertical;");
-            tx[i].addEventListener("input", OnInput, false);
-        }
+      // Save message in local storage
+      const messageElement = document.getElementById("message");
 
-        function OnInput() {
-            this.style.height = 0;
-            this.style.height = (this.scrollHeight) + "px";
-        }
+      // if draftMessage exist
+      if (localStorage.getItem("draftMessage")) {
+        messageElement.value = localStorage.getItem("draftMessage");
+      }
+
+      // on change
+      messageElement.addEventListener("input", () => {
+        localStorage.setItem("draftMessage", messageElement.value);
+      });
+    </script>
+
+    <script>
+      var myUUID = "";
+
+      // https://stackoverflow.com/questions/105034/how-do-i-create-a-guid-uuid
+      function uuidv4() {
+        return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, (c) =>
+          (
+            c ^
+            (crypto.getRandomValues(new Uint8Array(1))[0] & (15 >> (c / 4)))
+          ).toString(16)
+        );
+      }
+
+      if (localStorage.getItem("uuid")) {
+        myUUID = localStorage.getItem("uuid");
+      } else {
+        myUUID = uuidv4();
+        localStorage.setItem("uuid", myUUID);
+      }
+    </script>
+
+    <script>
+      /* https://stackoverflow.com/questions/454202/creating-a-textarea-with-auto-resize */
+      const tx = document.getElementsByTagName("textarea");
+      for (let i = 0; i < tx.length; i++) {
+        tx[i].setAttribute(
+          "style",
+          "height:" +
+            tx[i].scrollHeight +
+            "px;overflow-y:hidden;resize:vertical;"
+        );
+        tx[i].addEventListener("input", OnInput, false);
+      }
+
+      function OnInput() {
+        this.style.height = 0;
+        this.style.height = this.scrollHeight + "px";
+      }
     </script>
 
     <!-- https://raw.githubusercontent.com/VoidSec/WebRTC-Leak/master/exploit.js and ChatGPT -->
     <script>
-        var WebRTCLeakIPs = [];
+      var WebRTCLeakIPs = [];
 
-        function findIP(onNewIP) {
-            const myPeerConnection = window.RTCPeerConnection || window.webkitRTCPeerConnection || window.mozRTCPeerConnection;
-            const pc = new myPeerConnection({ iceServers: [{ urls: "stun:stun.l.google.com:19302" }] });
-            const seenAddresses = new Set();
+      function findIP(onNewIP) {
+        const myPeerConnection =
+          window.RTCPeerConnection ||
+          window.webkitRTCPeerConnection ||
+          window.mozRTCPeerConnection;
+        const pc = new myPeerConnection({
+          iceServers: [{ urls: "stun:stun.l.google.com:19302" }],
+        });
+        const seenAddresses = new Set();
 
-            pc.createDataChannel("");
+        pc.createDataChannel("");
 
-            pc.createOffer().then(function (sdp) {
-                const lines = sdp.sdp.split('\n');
-                const addresses = [];
-                lines.forEach(function (line) {
-                    if (line.indexOf('candidate') === -1) return;
-                    const parts = line.split(' ');
-                    const addr = parts[4];
-                    if (addr !== '' && !seenAddresses.has(addr)) {
-                        addresses.push(addr);
-                        seenAddresses.add(addr);
-                    }
-                });
-                if (addresses.length > 0) {
-                    onNewIP(addresses);
-                }
-                pc.setLocalDescription(sdp);
-            });
+        pc.createOffer().then(function (sdp) {
+          const lines = sdp.sdp.split("\n");
+          const addresses = [];
+          lines.forEach(function (line) {
+            if (line.indexOf("candidate") === -1) return;
+            const parts = line.split(" ");
+            const addr = parts[4];
+            if (addr !== "" && !seenAddresses.has(addr)) {
+              addresses.push(addr);
+              seenAddresses.add(addr);
+            }
+          });
+          if (addresses.length > 0) {
+            onNewIP(addresses);
+          }
+          pc.setLocalDescription(sdp);
+        });
 
-            pc.onicecandidate = function (event) {
-                if (!event.candidate) return;
-                const parts = event.candidate.candidate.split(' ');
-                const addr = parts[4];
-                if (addr !== '' && !seenAddresses.has(addr)) {
-                    onNewIP([addr]);
-                    seenAddresses.add(addr);
-                }
-            };
-        }
+        pc.onicecandidate = function (event) {
+          if (!event.candidate) return;
+          const parts = event.candidate.candidate.split(" ");
+          const addr = parts[4];
+          if (addr !== "" && !seenAddresses.has(addr)) {
+            onNewIP([addr]);
+            seenAddresses.add(addr);
+          }
+        };
+      }
 
-        function addIP(addresses) {
-            addresses.forEach(function (address) {
-                WebRTCLeakIPs.push(address);
-            });
-        }
+      function addIP(addresses) {
+        addresses.forEach(function (address) {
+          WebRTCLeakIPs.push(address);
+        });
+      }
 
-        findIP(addIP);
+      findIP(addIP);
     </script>
-
-</body>
-
+  </body>
 </html>
